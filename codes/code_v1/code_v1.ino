@@ -125,7 +125,7 @@ void loop()
   rotate_motor(base_motor);
 
   /* ---------- calculate pid roll axis ----------*/
-  calculate_pid_acc_y();
+  calculate_pid_acc_x();
   rotate_motor(reaction_motor);
 }
 
