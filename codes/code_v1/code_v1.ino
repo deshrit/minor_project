@@ -204,9 +204,9 @@ void calculate_pid_acc_x()
   Serial.print(pid_acc_x);
   
   // give the pid value to system accordingly
-  if(error_acc_x > 0) base_motor.motor_dir = true;
-  if(error_acc_x < 0) base_motor.motor_dir = false;
-  base_motor.motor_speed = abs((int)pid_acc_x); // speed is the pid value
+  if(error_acc_x > 0) reaction_motor.motor_dir = true;
+  if(error_acc_x < 0) reaction_motor.motor_dir = false;
+  reaction_motor.motor_speed = abs((int)pid_acc_x); // speed is the pid value
 
 }
 
