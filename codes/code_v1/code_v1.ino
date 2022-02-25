@@ -110,10 +110,10 @@ void loop()
   /* ---------- read accelerometer and gyro data ----------*/
   read_imu_data(mpu_addr);
 
-//  Serial.print("\n\nacc_x: "); // acc_y is the roll axis(reaction wheel) accelerometer data
-//  Serial.print(acc_x);
-  Serial.print("\n\nacc_y: "); // acc_y is the pitch axis(base wheel) accelerometer data
-  Serial.print(acc_y);
+  Serial.print("\n\nacc_x: "); // acc_y is the roll axis(reaction wheel) accelerometer data
+  Serial.print(acc_x);
+//  Serial.print("\n\nacc_y: "); // acc_y is the pitch axis(base wheel) accelerometer data
+//  Serial.print(acc_y);
 
   // elapsed time calculation
   previous_time = current_time;
@@ -121,8 +121,8 @@ void loop()
   elapsed_time = (current_time - previous_time); // time in milisec
 
   //  /* ---------- calculate pid pitch axis ----------*/
-  calculate_pid_acc_y();
-  rotate_motor(base_motor);
+//  calculate_pid_acc_y();
+//  rotate_motor(base_motor);
 
   /* ---------- calculate pid roll axis ----------*/
   calculate_pid_acc_x();
