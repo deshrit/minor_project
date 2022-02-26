@@ -52,7 +52,7 @@ Motor reaction_motor(reaction_motor_ena, reaction_motor_in1, reaction_motor_in2)
 /* -------------------- pid calculation variables -------------------- */
 
 // ----- gain constants to be adjusted
-int kp_acc_x = 300, ki_acc_x = 0, kd_acc_x = 0;
+int kp_acc_x = 500, ki_acc_x = 0, kd_acc_x = 0;
 int kp_acc_y = 500, ki_acc_y = 0, kd_acc_y = 0;
 // ----- gain constants to be adjusted
 
@@ -106,6 +106,7 @@ void setup()
 /* ======================================== loop ======================================== */
 void loop()
 {
+  
   
   /* ---------- read accelerometer and gyro data ----------*/
   read_imu_data(mpu_addr);
