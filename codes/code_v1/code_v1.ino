@@ -1,3 +1,6 @@
+
+
+
 #include <Wire.h>
 
 /* -------------------- imu varibales -------------------- */
@@ -52,8 +55,8 @@ Motor reaction_motor(reaction_motor_ena, reaction_motor_in1, reaction_motor_in2)
 /* -------------------- pid calculation variables -------------------- */
 
 // ----- gain constants to be adjusted
-int kp_acc_x = 500, ki_acc_x = 0, kd_acc_x = 0;
-int kp_acc_y = 500, ki_acc_y = 0, kd_acc_y = 0;
+long kp_acc_x = 300, ki_acc_x = 70, kd_acc_x = 1200;
+long kp_acc_y = 200, ki_acc_y = 60, kd_acc_y = 900;
 // ----- gain constants to be adjusted
 
 // set points, errors and pids
@@ -111,19 +114,24 @@ void loop()
   /* ---------- read accelerometer and gyro data ----------*/
   read_imu_data(mpu_addr);
 
+  Serial.print("\n\nacc_y: "); // acc_y is the pitch axis(base wheel) accelerometer data
+  Serial.print(acc_y);
+
   Serial.print("\n\nacc_x: "); // acc_y is the roll axis(reaction wheel) accelerometer data
   Serial.print(acc_x);
-//  Serial.print("\n\nacc_y: "); // acc_y is the pitch axis(base wheel) accelerometer data
-//  Serial.print(acc_y);
 
   // elapsed time calculation
   previous_time = current_time;
   current_time = millis();
   elapsed_time = (current_time - previous_time); // time in milisec
 
+  Serial.print("\telapsed_time: ");
+  Serial.print(elapsed_time);
+
+  
   //  /* ---------- calculate pid pitch axis ----------*/
-//  calculate_pid_acc_y();
-//  rotate_motor(base_motor);
+  calculate_pid_acc_y();
+  rotate_motor(base_motor);
 
   /* ---------- calculate pid roll axis ----------*/
   calculate_pid_acc_x();
@@ -162,10 +170,10 @@ void read_imu_data(const uint8_t addr)
 
 /* ---------- motor rotating function ---------- */
 
-// motor object and direction - dir as parameter
-void rotate_motor(Motor motor) // false => clockwise, true=> anticlockwise
+// motor object as parameter
+void rotate_motor(Motor motor)
 { 
-  if(motor.motor_dir) {
+  if(motor.motor_dir) { // motor_dir == false for clockwise and true for anti clockwise
     digitalWrite(motor.motor_in1, HIGH);
     digitalWrite(motor.motor_in2, LOW);
     analogWrite(motor.motor_enable, motor.motor_speed);
@@ -194,10 +202,12 @@ void calculate_pid_acc_x()
   error_acc_x = set_point_acc_x - acc_x;
   pid_p_acc_x = kp_acc_x * error_acc_x;
   pid_i_acc_x = pid_i_acc_x + ki_acc_x * error_acc_x;
-  pid_d_acc_x = kd_acc_x * (error_acc_x - previous_error_acc_x);
+  pid_d_acc_x = kd_acc_x * ((error_acc_x - previous_error_acc_x) / elapsed_time);
   pid_acc_x = pid_p_acc_x + pid_i_acc_x + pid_d_acc_x;
 
 //  pid_acc_x = pid_p_acc_x;
+//  pid_acc_x = pid_i_acc_x;
+//  pid_acc_x = pid_d_acc_x;
 
   previous_error_acc_x = error_acc_x;
   
@@ -221,9 +231,12 @@ void calculate_pid_acc_y()
   error_acc_y = set_point_acc_y - acc_y;
   pid_p_acc_y = kp_acc_y * error_acc_y;
   pid_i_acc_y = pid_i_acc_y + ki_acc_y * error_acc_y;
-  pid_d_acc_y = kd_acc_y * (error_acc_y - previous_error_acc_y);
+  pid_d_acc_y = kd_acc_y * ((error_acc_y - previous_error_acc_y) / elapsed_time);
   pid_acc_y = pid_p_acc_y + pid_i_acc_y + pid_d_acc_y;
+  
 //  pid_acc_y = pid_p_acc_y;
+//  pid_acc_y = pid_i_acc_y;
+//  pid_acc_y = pid_d_acc_y;
 
   previous_error_acc_y = error_acc_y;
   
