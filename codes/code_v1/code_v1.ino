@@ -1,6 +1,3 @@
-
-
-
 #include <Wire.h>
 
 /* -------------------- imu varibales -------------------- */
@@ -55,8 +52,8 @@ Motor reaction_motor(reaction_motor_ena, reaction_motor_in1, reaction_motor_in2)
 /* -------------------- pid calculation variables -------------------- */
 
 // ----- gain constants to be adjusted
-long kp_acc_x = 300, ki_acc_x = 70, kd_acc_x = 1200;
-long kp_acc_y = 200, ki_acc_y = 60, kd_acc_y = 900;
+long kp_acc_x = 1200, ki_acc_x = 70, kd_acc_x = 1200;
+long kp_acc_y = 900, ki_acc_y = 100, kd_acc_y = 10000;
 // ----- gain constants to be adjusted
 
 // set points, errors and pids
@@ -123,7 +120,7 @@ void loop()
   // elapsed time calculation
   previous_time = current_time;
   current_time = millis();
-  elapsed_time = (current_time - previous_time); // time in milisec
+  elapsed_time = current_time - previous_time; // time in milisec
 
   Serial.print("\telapsed_time: ");
   Serial.print(elapsed_time);
@@ -205,7 +202,7 @@ void calculate_pid_acc_x()
   pid_d_acc_x = kd_acc_x * ((error_acc_x - previous_error_acc_x) / elapsed_time);
   pid_acc_x = pid_p_acc_x + pid_i_acc_x + pid_d_acc_x;
 
-//  pid_acc_x = pid_p_acc_x;
+  pid_acc_x = pid_p_acc_x;
 //  pid_acc_x = pid_i_acc_x;
 //  pid_acc_x = pid_d_acc_x;
 
@@ -217,8 +214,12 @@ void calculate_pid_acc_x()
   // give the pid value to system accordingly
   if(error_acc_x > 0) reaction_motor.motor_dir = true;
   if(error_acc_x < 0) reaction_motor.motor_dir = false;
-  reaction_motor.motor_speed = abs((int)pid_acc_x); // speed is the pid value
+  
+  pid_acc_x = abs((int)pid_acc_x);
 
+  if(pid_acc_x >= 255)  pid_acc_x = 255;
+  
+  base_motor.motor_speed = pid_acc_x; // speed is the pid value
 }
 
 
@@ -234,7 +235,7 @@ void calculate_pid_acc_y()
   pid_d_acc_y = kd_acc_y * ((error_acc_y - previous_error_acc_y) / elapsed_time);
   pid_acc_y = pid_p_acc_y + pid_i_acc_y + pid_d_acc_y;
   
-//  pid_acc_y = pid_p_acc_y;
+  pid_acc_y = pid_p_acc_y;
 //  pid_acc_y = pid_i_acc_y;
 //  pid_acc_y = pid_d_acc_y;
 
@@ -247,6 +248,10 @@ void calculate_pid_acc_y()
   // give the pid value to system accordingly
   if(error_acc_y > 0) base_motor.motor_dir = true;
   if(error_acc_y < 0) base_motor.motor_dir = false;
-  base_motor.motor_speed = abs((int)pid_acc_y); // speed is the pid value
 
+  pid_acc_y = abs((int)pid_acc_y);
+
+  if(pid_acc_y >= 255)  pid_acc_y = 255;
+  
+  base_motor.motor_speed = pid_acc_y; // speed is the pid value
 }
