@@ -1,3 +1,15 @@
+/*
+
+Code for the micro controller to read
+data from the mpu6050 sensor and generate the
+required control signal for the motor driver
+inorder to balance the bot in upright vertical 
+position
+
+*/
+
+
+/* -------------------- library for I2C communication with sensor ----------------------  */
 #include <Wire.h>
 
 /* -------------------- imu varibales -------------------- */
